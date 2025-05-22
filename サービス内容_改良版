@@ -1,0 +1,192 @@
+import pandas as pd
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
+
+def setup_webdriver():
+    options = webdriver.ChromeOptions()
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    driver.implicitly_wait(10)
+    return driver
+
+def scrape_website(driver, url):
+    data = {}
+    try:
+        driver.get(url)
+        # タブのXPATHを変更してクリック
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="kihonItemTab"]/li[4]/a'))).click()
+        element = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr/th")))
+        data["事業所の運営に関する方針"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[2]/td").text
+        data["平日の営業時間"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[4]/td").text
+        data["土曜日の営業時間"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[5]/td").text
+        data["日曜日の営業時間"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[6]/td").text
+        data["祝日の営業時間"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[7]/td").text
+        data["定休日"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[8]/td").text
+        data["留意事項"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[9]/td").text
+        data["key_17"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[10]/th").text
+        data["key_18"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[11]/th[2]").text
+        image_element_1 = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[11]/td/img")
+        data["緊急時の電話連絡の対応"] = image_element_1.get_attribute('src') if image_element_1 else None
+        data["（その連絡先：電話番号）"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[12]/td").text
+        data["key_23"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[13]/th").text
+        data["事業所が通常時に介護サービスを提供する地域"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[14]/td").text
+        data["介護サービスの内容等（記入日前月から直近１年間の状況）"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[15]/th").text
+        data["介護報酬の加算状況"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[16]/th[2]").text
+        image_element_1 = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[17]/td/img")
+        data["特定事業所加算（Ⅰ）] = image_element_1.get_attribute('src') if image_element_1 else None
+        image_element_1 = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[18]/td/img")
+        data["特定事業所加算（Ⅱ）"] = image_element_1.get_attribute('src') if image_element_1 else None
+        image_element_1 = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[19]/td/img")
+        data["特定事業所加算（Ⅲ）"] = image_element_1.get_attribute('src') if image_element_1 else None
+        image_element_1 = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[20]/td/img")
+        data["特定事業所加算（Ａ）"] = image_element_1.get_attribute('src') if image_element_1 else None
+        image_element_1 = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[21]/td/img")
+        data["特定事業所医療介護連携加算"] = image_element_1.get_attribute('src') if image_element_1 else None
+        image_element_1 = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[22]/td/img")
+        data["入院時情報連携加算（Ⅰ）"] = image_element_1.get_attribute('src') if image_element_1 else None
+        image_element_1 = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[23]/td/img")
+        data["入院時情報連携加算（Ⅱ）"] = image_element_1.get_attribute('src') if image_element_1 else None
+        image_element_1 = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[24]/td/img")
+        data["退院・退所加算（Ⅰ）イ"] = image_element_1.get_attribute('src') if image_element_1 else None
+        image_element_1 = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[25]/td/img")
+        data["退院・退所加算（Ⅰ）ロ"] = image_element_1.get_attribute('src') if image_element_1 else None
+        image_element_1 = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[26]/td/img")
+        data["退院・退所加算（Ⅱ）イ"] = image_element_1.get_attribute('src') if image_element_1 else None
+        image_element_1 = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[27]/td/img")
+        data["退院・退所加算（Ⅱ）ロ"] = image_element_1.get_attribute('src') if image_element_1 else None
+        image_element_1 = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[28]/td/img")
+        data["退院・退所加算（Ⅲ）"] = image_element_1.get_attribute('src') if image_element_1 else None
+        image_element_1 = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[29]/td/img")
+        data["通院時情報連携加算"] = image_element_1.get_attribute('src') if image_element_1 else None
+
+        image_element_1 = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[30]/td/img")
+        data["緊急時等居宅カンファレンス加算"] = image_element_1.get_attribute('src') if image_element_1 else None
+        
+        image_element_1 = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[31]/td/img")
+        data["ターミナルケアマネジメント加算"] = image_element_1.get_attribute('src') if image_element_1 else None
+
+        data[""介護支援専門員１人当たりの利用者数※標準的な給付管理人数：３５人""] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[32]/td").text
+        data["介護サービスの利用者（要介護者）への提供実績（記入日前月の状況）"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[33]/th").text
+        data["利用者の人数"] = driver.find_element(By.ID,"rowSpanId38").text
+
+        data["要支援1"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[35]/td").text
+        data["要支援1 前年同月の提供実績"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[36]/td").text
+
+        data["要支援2"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[35]/td[2]").text
+        data["要支援2 前年同月の提供実績"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[36]/td[2]").text
+
+        data["要介護1"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[35]/td[3]").text
+        data["要介護1 前年同月の提供実績"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[36]/td[3]").text
+
+        data["要介護2"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[35]/td[4]").text
+        data["要介護2 前年同月の提供実績"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[36]/td[4]").text
+
+        data["要介護3"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[35]/td[5]").text
+        data["要介護3 前年同月の提供実績"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[36]/td[5]").text
+
+        data["要介護4"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[35]/td[6]").text
+        data["要介護4 前年同月の提供実績"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[36]/td[6]").text
+
+        data["要介護5"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[35]/td[7]").text
+        data["要介護5 前年同月の提供実績"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[36]/td[7]").text
+
+        data["合計"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[35]/td[8]").text
+        data["合計 前年同月の提供実績"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[36]/td[8]").text
+        data["利用者等からの苦情に対応する窓口等の状況"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[37]/th").text
+        data["key_86"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[38]/th[2]").text
+        data["窓口の名称"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[38]/td").text
+        data["key_88"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[39]/th").text
+        data["電話番号"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[39]/td").text
+        data["平日対応時間"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[40]/td").text
+        data["土曜日対応時間"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[41]/td").text
+        data["日曜対応時間"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[42]/td").text
+        data["祝日対応時間"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[43]/td").text
+        data["定休日"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[44]/td").text
+        data["留意事項"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[45]/td").text
+
+
+        data["介護サービスの提供により賠償すべき事故が発生したときの対応の仕組み"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[46]/th").text
+        image_element_1 = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[47]/td/img")
+        data["損害賠償保険の加入状況"] = image_element_1.get_attribute('src') if image_element_1 else None
+        data["介護サービスの提供内容に関する特色等"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[49]/td").text
+        data["ケアマネジメントの公正中立性の確保"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[50]/th").text
+        data["前6ヶ月間に作成したケアプランにおける各サービスの利用割合"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[51]/th[2]").text
+        data["訪問介護"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[52]/td").text
+        data["通所介護"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[53]/td").text
+        data["地域密着型通所介護"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[54]/td").text
+
+        data["福祉用具貸与"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[55]/td").text
+        data["key_119"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[56]/th").text
+        data["key_120"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[58]/th").text
+        data["key_121"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[58]/td").text
+        data["key_122"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[58]/td[2]").text
+        data["key_123"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[58]/td[3]").text
+        data["key_124"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[58]/td[4]").text
+        data["key_125"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[58]/td[5]").text
+        data["key_126"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[58]/td[6]").text
+        data["key_127"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[59]/th").text
+        data["key_128"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[59]/td").text
+        data["key_129"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[59]/td[2]").text
+        data["key_130"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[59]/td[3]").text
+        data["key_131"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[59]/td[4]").text
+        data["key_132"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[59]/td[5]").text
+        data["key_133"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[59]/td[6]").text
+        data["key_134"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[60]/th").text
+        data["key_135"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[60]/td").text
+        data["key_136"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[60]/td[2]").text
+        data["key_137"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[60]/td[3]").text
+        data["key_138"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[60]/td[4]").text
+        data["key_139"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[60]/td[5]").text
+        data["key_140"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[60]/td[6]").text
+        data["key_141"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[61]/th").text
+        data["key_142"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[61]/td").text
+        data["key_143"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[61]/td[2]").text
+        data["key_144"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[61]/td[3]").text
+        data["key_145"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[61]/td[4]").text
+        data["key_146"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[61]/td[5]").text
+        data["key_147"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[61]/td[6]").text
+        data["key_148"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[62]/th").text
+        data["key_149"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[63]/th[2]").text
+        image_element_1 = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[63]/td/img").text
+        data["key_150"] = image_element_1.get_attribute('src') if image_element_1 else None
+        data["key_151"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[64]/th[2]").text
+        image_element_1 = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[64]/td/img").text
+        data["key_152"] = image_element_1.get_attribute('src') if image_element_1 else None
+        data["key_153"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[65]/th").text
+        image_element_1 = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[65]/td/img").text
+        data["key_154"] = image_element_1.get_attribute('src') if image_element_1 else None
+        data["key_155"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[66]/th[2]").text
+        data["key_156"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[66]/td").text
+        data["key_157"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[67]/th").text
+        data["key_158"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[67]/td").text
+        data["key_159"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[68]/th").text
+        data["key_160"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[68]/td[2]").text
+        data["key_161"] = driver.find_element(By.XPATH, "//div[@id='tableGroup-5']/table/tbody/tr[69]/th").text
+        
+    except Exception as e:
+        print(f"Error accessing {url}: {e}")
+    
+    return data
+
+def main():
+    excel_path = '事業所.xlsx'
+    urls_df = pd.read_excel(excel_path, usecols=["URL"])
+    driver = setup_webdriver()
+
+    scraped_data_list = []
+
+    for url in urls_df['URL']:
+        scraped_row = scrape_website(driver, url)
+        scraped_data_list.append(scraped_row)
+
+    driver.quit()
+
+    # リストをDataFrameに変換してExcelに書き出し
+    scraped_data = pd.DataFrame(scraped_data_list)
+    scraped_data.to_excel("scraped_data_result.xlsx", index=False)
+
+if __name__ == "__main__":
+    main()
