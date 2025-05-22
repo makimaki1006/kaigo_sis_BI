@@ -8,3 +8,10 @@ Install the required Python packages using pip:
 pip install -r requirements.txt
 ```
 
+## Usage
+
+After installing dependencies, run the combined scraper:
+
+```bash
+python scrape_all_tabs.py
+```
